@@ -20,7 +20,7 @@ export default function Home() {
     setLoading(true);
     try {
       const response = await axios.get(
-        process.env.NEXT_PUBLIC_URL + "/payment_method",
+      "localhost:3000/api/v1/payment_method",
         {
           country: selectedCountry.name,
           currency: selectedCountry.currency_code,
@@ -37,7 +37,7 @@ export default function Home() {
       setStep("payment_method");
       setLoading(false);
     } catch (err) {
-      console.error(err);
+      console.error(err, "pay");
     }
   };
 
@@ -46,11 +46,11 @@ export default function Home() {
       setLoading(true);
       try {
         const response = await axios.get(process.env.NEXT_PUBLIC_URL + "/countries");
-
         setCountries(response.data);
         setLoading(false);
       } catch (err) {
-        console.error(error);
+        console.error(err, "country");
+
       }
     };
 
