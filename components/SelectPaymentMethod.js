@@ -5,13 +5,13 @@ const SelectPaymentMethod = ({ paymentType, moveToNextStep }) => {
 
   const handleChange = (e) => {
     console.log(e.target.value);
-
     setSelectedType(paymentType[e.target.value]);
   };
 
   useEffect(() => {
     if (!!selectedType) {
       console.log("selected pay", selectedType);
+      moveToNextStep(selectedType);
     }
   }, [selectedType]);
 

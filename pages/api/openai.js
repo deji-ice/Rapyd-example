@@ -14,10 +14,12 @@ export default async function handler(req, res) {
 
       const completion = await openai.createChatCompletion({
         model: "gpt-4",
-        prompt: `${req.body.prompt}`,
+        messages:[{"role": "user", "content": `${req.body.prompt}`}],
+        n: 2,
+        temperature: 1.0
       });
 
-      const generatedText = completion.data.choices[0].text;
+      const generatedText = completion.data.choices[0].message.content;
       res.status(200).json({ text: generatedText });
     } else {
       res.status(400).json({ error: "No prompt provided." });
