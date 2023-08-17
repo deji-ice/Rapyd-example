@@ -7,6 +7,9 @@
   },
   "dependencies": {
     "@bebapps/rapyd-sdk": "^0.0.4",
+    "@tutim/fields": "^0.1.4",
+    "@tutim/headless": "^0.1.4",
+    "@tutim/types": "^0.1.4",
     "axios": "^1.4.0",
     "date-fns": "^2.29.3",
     "gray-matter": "^4.0.3",
