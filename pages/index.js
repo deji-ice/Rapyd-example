@@ -7,6 +7,8 @@ import Loader from "../components/loader";
 import SelectPaymentMethod from "../components/SelectPaymentMethod";
 import SelectPaymentType from "../components/selectPaymentType";
 
+
+
 export default function Home() {
   const [countries, setCountries] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState("");
@@ -50,10 +52,10 @@ export default function Home() {
       const response = await axios.post("/api/required_fields", {
         type: selectedPaymentMethod,
       });
-      setPaymentTypeData(response.data.data.fields);
+      setPaymentTypeData(response.data.data);
       console.log(response.data.data.fields)
       setStep("set_required_fields");
-      console.log(response.data.data.fields);
+      console.log(response.data.data);
       
       setLoading(false);
     } catch (error) {
@@ -105,7 +107,8 @@ export default function Home() {
           paymentMethodData,
           paymentTypeData,
           moveToSecondStep,
-          moveToThirdStep
+          moveToThirdStep,
+          isLoading
         )
       )}
     </Layout>
@@ -119,6 +122,7 @@ const GetWorkFlow = (
   paymentTypeData,
   moveToSecondStep,
   moveToThirdStep,
+  isLoading
 ) => {
   switch (step) {
     case "select_country":
@@ -143,6 +147,7 @@ const GetWorkFlow = (
           <SelectPaymentType
             moveToNextStep={moveToThirdStep}
             paymentType={paymentTypeData}
+            isLoading={isLoading}
           />
         </>
       );
