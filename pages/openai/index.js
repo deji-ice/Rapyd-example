@@ -3,6 +3,7 @@ import OpenAi from "../../components/open_ai";
 
 
 const Open = () => {
+  
   return <div><OpenAi/></div>;
 };
 
