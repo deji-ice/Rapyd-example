@@ -1,17 +1,16 @@
 import { useEffect, useState } from "react";
 
-const SelectPaymentMethod = ({ paymentType, moveToNextStep }) => {
-  const [selectedType, setSelectedType] = useState();
+const SelectPaymentMethod = ({ paymentMethod, moveToNextStep }) => {
+  const [selectedType, setSelectedType] = useState("");
 
   const handleChange = (e) => {
-    console.log(e.target.value);
-    setSelectedType(paymentType[e.target.value]);
+    setSelectedType(e.target.value);
   };
 
   useEffect(() => {
-    if (!!selectedType) {
-      console.log("selected pay", selectedType);
+    if (selectedType != "") {
       moveToNextStep(selectedType);
+      console.log("selected pay", selectedType);
     }
   }, [selectedType]);
 
@@ -25,9 +24,8 @@ const SelectPaymentMethod = ({ paymentType, moveToNextStep }) => {
       <option value="" disabled>
         Please select Payment Method
       </option>
-      {paymentType.map((payment, index) => (
+      {paymentMethod.map((payment, index) => (
         <option className="flex" key={index} value={payment.type}>
-          <img className="w-3 h-2" src={payment.image} alt={payment.name} />{" "}
           {payment.name}
         </option>
       ))}
