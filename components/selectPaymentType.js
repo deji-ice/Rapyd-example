@@ -18,7 +18,7 @@ const SelectPaymentType = ({ paymentType, moveToNextStep }) => {
     const fieldNames = paymentType.fields.map((field) => field.name).join(", ");
 
     // Create a prompt based on the extracted field names
-    const prompt = `create a react.js component styled with tailwind css based on these fields, generate only the code, DO NOT wrap the returned code with backticks. ONLY generate the code, DO NOT add any explanatry texts, here are the fields: ${fieldNames}`;
+    const prompt = `create a react.js component styled with tailwind css based on these fields and with an off white background color  style all the tags and buttons with nice colors and borders and make the height & width fit the content , generate only the code, DO NOT wrap the returned code with backticks. ONLY generate the code, DO NOT add any explanatory texts, here are the fields and make the submit button console.log the inputs: ${fieldNames} `;
 
     try {
       const responses = await fetch("/api/openai", {
@@ -44,7 +44,7 @@ const SelectPaymentType = ({ paymentType, moveToNextStep }) => {
   console.log("rerenders");
 
   useEffect(() => {
-    if (paymentType.fields) {
+    if (paymentType.fields && content === "") {
       console.log("called");
       getResponseFromOpenAI();
     }
@@ -57,7 +57,7 @@ const SelectPaymentType = ({ paymentType, moveToNextStep }) => {
   // }, [selectedType]);
 
   return <>{isLoading || !content.length ? <Loader /> : <LoadableComponent />}</>;
-};
+}
 export default SelectPaymentType;
 
 const LoadableComponent = loadable(() => import("../utils/GeneratedCodeComponent"), {

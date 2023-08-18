@@ -36,6 +36,11 @@ export default async function handler(req, res) {
               export default MyComponent;
           `,
           },
+          {
+            role: "user",
+            content: "Please create a reactjs tailwind css button",
+          },
+
           { role: "user", content: `${req.body.prompt}` },
         ],
       });
