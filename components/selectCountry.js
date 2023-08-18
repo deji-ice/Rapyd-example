@@ -9,7 +9,6 @@ const SelectCountry = ({ countries, moveToNextStep }) => {
 
   useEffect(() => {
     if (!!selectedCountry) {
-      console.log("selected", selectedCountry);
       moveToNextStep(selectedCountry);
     }
   }, [selectedCountry]);

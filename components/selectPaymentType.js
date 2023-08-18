@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import loadable from "@loadable/component";
-import Loader from "./loader";
+import Loader from "./Loader";
 // import { removeWordsOutsideCodeBlock } from "../utils/codeFormatter";
 
 const SelectPaymentType = ({ paymentType, moveToNextStep }) => {
@@ -11,14 +11,21 @@ const SelectPaymentType = ({ paymentType, moveToNextStep }) => {
 
   const getResponseFromOpenAI = useCallback(async () => {
     setContent("");
-    console.log("Getting response from OpenAI...");
     setIsLoading(true);
 
     // Extract field names from paymentType.fields
-    const fieldNames = paymentType.fields.map((field) => field.name).join(", ");
+    const customerFieldNames = paymentType.payment_options[0].required_fields?.map((field) => field.name).join(", ") || "";
+
+    const fieldNames =
+      paymentType.fields
+        .filter((field) => field.name !== "name")
+        .map((field) => field.name)
+        .join(", ") +
+      ", " +
+      customerFieldNames;
 
     // Create a prompt based on the extracted field names
-    const prompt = `create a react.js component styled with tailwind css based on these fields and with an off white background color  style all the tags and buttons with nice colors and borders and make the height & width fit the content , generate only the code, DO NOT wrap the returned code with backticks. ONLY generate the code, DO NOT add any explanatory texts, here are the fields and make the submit button console.log the inputs: ${fieldNames} `;
+    const prompt = `you are a senior react engineer gpt, create a react.js hook component styled with tailwind css based on these fields, generate only the code, DO NOT wrap the returned code with backticks. ONLY generate the code, DO NOT add any explanatry texts, here are the fields: amount, ${fieldNames}.`;
 
     try {
       const responses = await fetch("/api/openai", {
@@ -27,7 +34,8 @@ const SelectPaymentType = ({ paymentType, moveToNextStep }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          prompt: prompt,
+          prompt,
+          fieldNames,
         }),
       });
 
@@ -41,25 +49,20 @@ const SelectPaymentType = ({ paymentType, moveToNextStep }) => {
     }
   }, [paymentType]);
 
-  console.log("rerenders");
+  const handleFormComplete = (fields) => {
+    moveToNextStep(fields);
+  };
 
   useEffect(() => {
     if (paymentType.fields && content === "") {
-      console.log("called");
       getResponseFromOpenAI();
     }
   }, [paymentType]);
 
-  // useEffect(() => {
-  //   if (!!selectedType) {
-  //     moveToNextStep(selectedType);
-  //   }
-  // }, [selectedType]);
-
-  return <>{isLoading || !content.length ? <Loader /> : <LoadableComponent />}</>;
-}
+  return <>{isLoading || !content.trim().length ? <Loader /> : <LoadableComponent onFormComplete={handleFormComplete} />}</>;
+};
 export default SelectPaymentType;
 
-const LoadableComponent = loadable(() => import("../utils/GeneratedCodeComponent"), {
+const LoadableComponent = loadable(() => import("../pages/api/GeneratedCodeComponent"), {
   fallback: <div>Page is Loading...</div>,
 });

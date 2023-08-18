@@ -10,17 +10,11 @@ const SelectPaymentMethod = ({ paymentMethod, moveToNextStep }) => {
   useEffect(() => {
     if (selectedType != "") {
       moveToNextStep(selectedType);
-      console.log("selected pay", selectedType);
     }
   }, [selectedType]);
 
   return (
-    <select
-      className="w-full outline-none"
-      name="type"
-      onChange={handleChange}
-      defaultValue=""
-    >
+    <select className="w-full outline-none" name="type" onChange={handleChange} defaultValue="">
       <option value="" disabled>
         Please select Payment Method
       </option>
