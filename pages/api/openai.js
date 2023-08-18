@@ -1,4 +1,6 @@
 import { OpenAIApi, Configuration } from "openai";
+import { removeMarkers } from "../../utils/codeFormatter";
+const fs = require("fs");
 
 export default async function handler(req, res) {
   const configuration = new Configuration({
@@ -37,15 +39,17 @@ export default async function handler(req, res) {
           },
           {
             role: "user",
-            content:
-              "Please create html code with inline css what create the following component, Meterial UI look and feel, return only code",
+            content: "Please create html code with inline css what create the following component, Material UI look and feel, return only code",
           },
-          {role: "user", "content": "DO NOT wrap the returned code with ```"},
+          { role: "user", content: "DO NOT wrap the returned code with ```" },
           { role: "user", content: `${req.body.prompt}` },
         ],
       });
 
-      const generatedText = completion.data.choices[0].message.content;
+      console.log(req.body.prompt);
+
+      const generatedText = removeMarkers(completion.data.choices[0].message.content);
+      createFileContent(generatedText);
       res.status(200).json({ text: generatedText });
     } else {
       res.status(400).json({ error: "No prompt provided." });
@@ -55,3 +59,37 @@ export default async function handler(req, res) {
     res.status(500).json({ error: "An error occurred." });
   }
 }
+
+const createFileContent = async (content) => {
+  let isEmpty = false;
+  const defaultData = `
+  const component = () => {
+    return <></>;
+  };
+  
+  export default component;  
+  `;
+  fs.readFile("pages/api/GeneratedCodeComponent.js", "utf8", (_, data) => {
+    console.log("Equal? ", data.normalize() === defaultData.normalize());
+    if (data.normalize() === defaultData.normalize()) {
+      isEmpty = true;
+    }
+  });
+
+  if (isEmpty) {
+    writeFileContent(content);
+  } else {
+    await writeFileContent(defaultData);
+    writeFileContent(content);
+  }
+};
+
+const writeFileContent = (content) => {
+  fs.writeFile("pages/api/GeneratedCodeComponent.js", content, (err) => {
+    if (err) {
+      console.error("Error writing the file", err);
+    } else {
+      console.log("File written successfully");
+    }
+  });
+};

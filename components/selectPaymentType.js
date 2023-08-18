@@ -1,25 +1,24 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Loader from "./loader";
-import { removeWordsOutsideCodeBlock } from "../utils/codeFormatter";
+// import { removeWordsOutsideCodeBlock } from "../utils/codeFormatter";
 import GeneratedCodeComponent from "../pages/api/GeneratedCodeComponent";
 
 const SelectPaymentType = ({ paymentType, moveToNextStep }) => {
-  const [selectedType, setSelectedType] = useState();
-  const [code, setCode] = useState("");
+  // const [selectedType, setSelectedType] = useState();
+  // const [code, setCode] = useState("");
   const [isLoading, setIsLoading] = useState("");
-  const [response, setResponse] = useState("");
+  // const [response, setResponse] = useState("");
 
-  const getResponseFromOpenAI = async () => {
-    setResponse("");
+  const getResponseFromOpenAI = useCallback(async () => {
+    // setResponse("");
     console.log("Getting response from OpenAI...");
     setIsLoading(true);
 
     // Extract field names from paymentType.fields
     const fieldNames = paymentType.fields.map((field) => field.name).join(", ");
-    console.log(fieldNames);
 
     // Create a prompt based on the extracted field names
-    const prompt = `create next.js + tailwind css code based on these fields, generate only the code, use class and not className DO NOT wrap the returned code with backticks and only generate the code, do  ot add explanatry texts,: ${fieldNames}`;
+    const prompt = `create next.js + tailwind css code based on these fields, generate only the code, use class and not className DO NOT wrap the returned code with backticks and only generate the code, dont add explanatry texts,: ${fieldNames}`;
 
     try {
       const responses = await fetch("/api/openai", {
@@ -34,54 +33,27 @@ const SelectPaymentType = ({ paymentType, moveToNextStep }) => {
 
       const data = await responses.json();
       setIsLoading(false);
-      console.log(data);
-      setResponse(data.text);
+
+      // setResponse(data.text);
     } catch (error) {
       console.error("Error:", error);
       setIsLoading(false);
     }
-  };
-  const config = {
-    fields: [
-      {
-        key: "fullname",
-        label: "Full Name",
-        type: "text",
-        isRequired: true,
-      },
-      { key: "date", label: "Pick a date", type: "date" },
-    ],
-  };
+  }, [paymentType]);
 
   useEffect(() => {
     if (paymentType.fields) {
+      console.log("called");
       getResponseFromOpenAI();
     }
   }, [paymentType]);
 
-  useEffect(() => {
-    console.log(paymentType);
-  });
+  // useEffect(() => {
+  //   if (!!selectedType) {
+  //     moveToNextStep(selectedType);
+  //   }
+  // }, [selectedType]);
 
-  useEffect(() => {
-    if (!!selectedType) {
-      moveToNextStep(selectedType);
-    }
-  }, [selectedType]);
-
-  return (
-    <>
-      {isLoading ? (
-        <Loader />
-      ) : (
-<div
-    dangerouslySetInnerHTML={{
-        __html:removeWordsOutsideCodeBlock(response),
-    }}
-/>
-
-      )}
-    </>
-  );
+  return <>{isLoading ? <Loader /> : <GeneratedCodeComponent />}</>;
 };
 export default SelectPaymentType;

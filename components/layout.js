@@ -5,7 +5,7 @@ export const siteTitle = "Next.js Sample Website";
 export default function Layout({ children }) {
   return (
     <main className="w-full h-[100vh] p-2 grid place-items-center">
-      <form className="w-50 border p-6">
+      <form className="w-50 border p-6 max-h-[400px] overflow-y-auto">
         <Head>
           <link rel="icon" href="/favicon.ico" />
           <meta name="description" content="Learn how to build a personal website using Next.js" />

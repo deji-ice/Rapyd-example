@@ -1,7 +1,6 @@
-import React from 'react';
-
-const GeneratedCodeComponent = ({ generatedCode }) => {
-  return  <>{generatedCode}</>;
-};
-
-export default GeneratedCodeComponent;
+`  const component = () => {
+    return <></>;
+  };
+  
+  export default component;  
+  
