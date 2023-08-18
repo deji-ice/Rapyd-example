@@ -1,7 +1,13 @@
-export function removeWordsOutsideCodeBlock(str) {
-  if (str.startsWith("```") && str.endsWith("```")) {
-    return str.slice(3, -3);
-  } else {
-    return str.replace("```", "");
+export function removeWordsOutsideCodeBlock(text) {
+    const codeStart = '```';
+    const codeEnd = '```';
+  
+    const startIndex = text.indexOf(codeStart);
+    const endIndex = text.lastIndexOf(codeEnd);
+  
+    if (startIndex !== -1 && endIndex !== -1 && endIndex > startIndex) {
+      return text.substring(startIndex + codeStart.length, endIndex).trim();
+    }
+  
+    return '';
   }
-}
