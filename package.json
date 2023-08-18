@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "@bebapps/rapyd-sdk": "^0.0.4",
+    "@loadable/component": "^5.15.3",
     "@tutim/fields": "^0.1.4",
     "@tutim/headless": "^0.1.4",
     "@tutim/types": "^0.1.4",

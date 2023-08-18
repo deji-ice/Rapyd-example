@@ -1,16 +1,16 @@
 import { useEffect, useState, useCallback } from "react";
+import loadable from "@loadable/component";
 import Loader from "./loader";
 // import { removeWordsOutsideCodeBlock } from "../utils/codeFormatter";
-import GeneratedCodeComponent from "../pages/api/GeneratedCodeComponent";
 
 const SelectPaymentType = ({ paymentType, moveToNextStep }) => {
   // const [selectedType, setSelectedType] = useState();
   // const [code, setCode] = useState("");
   const [isLoading, setIsLoading] = useState("");
-  // const [response, setResponse] = useState("");
+  const [content, setContent] = useState("");
 
   const getResponseFromOpenAI = useCallback(async () => {
-    // setResponse("");
+    setContent("");
     console.log("Getting response from OpenAI...");
     setIsLoading(true);
 
@@ -18,7 +18,7 @@ const SelectPaymentType = ({ paymentType, moveToNextStep }) => {
     const fieldNames = paymentType.fields.map((field) => field.name).join(", ");
 
     // Create a prompt based on the extracted field names
-    const prompt = `create next.js + tailwind css code based on these fields, generate only the code, use class and not className DO NOT wrap the returned code with backticks and only generate the code, dont add explanatry texts,: ${fieldNames}`;
+    const prompt = `create a react.js component styled with tailwind css based on these fields, generate only the code, DO NOT wrap the returned code with backticks. ONLY generate the code, DO NOT add any explanatry texts, here are the fields: ${fieldNames}`;
 
     try {
       const responses = await fetch("/api/openai", {
@@ -34,12 +34,14 @@ const SelectPaymentType = ({ paymentType, moveToNextStep }) => {
       const data = await responses.json();
       setIsLoading(false);
 
-      // setResponse(data.text);
+      setContent(data.text);
     } catch (error) {
       console.error("Error:", error);
       setIsLoading(false);
     }
   }, [paymentType]);
+
+  console.log("rerenders");
 
   useEffect(() => {
     if (paymentType.fields) {
@@ -54,6 +56,10 @@ const SelectPaymentType = ({ paymentType, moveToNextStep }) => {
   //   }
   // }, [selectedType]);
 
-  return <>{isLoading ? <Loader /> : <GeneratedCodeComponent />}</>;
+  return <>{isLoading || !content.length ? <Loader /> : <LoadableComponent />}</>;
 };
 export default SelectPaymentType;
+
+const LoadableComponent = loadable(() => import("../utils/GeneratedCodeComponent"), {
+  fallback: <div>Page is Loading...</div>,
+});

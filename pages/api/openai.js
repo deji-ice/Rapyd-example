@@ -18,8 +18,7 @@ export default async function handler(req, res) {
         messages: [
           {
             role: "user",
-            content:
-              "create next.js + tailwind css code for button 200 x 100, light purple background, generate text on it. Please create a complete next.js component",
+            content: "Please create a complete react.js component",
           },
           {
             role: "assistant",
@@ -37,18 +36,13 @@ export default async function handler(req, res) {
               export default MyComponent;
           `,
           },
-          {
-            role: "user",
-            content: "Please create html code with inline css what create the following component, Material UI look and feel, return only code",
-          },
-          { role: "user", content: "DO NOT wrap the returned code with ```" },
           { role: "user", content: `${req.body.prompt}` },
         ],
       });
 
       console.log(req.body.prompt);
 
-      const generatedText = removeMarkers(completion.data.choices[0].message.content);
+      const generatedText = completion.data.choices[0].message.content;
       createFileContent(generatedText);
       res.status(200).json({ text: generatedText });
     } else {
@@ -61,31 +55,19 @@ export default async function handler(req, res) {
 }
 
 const createFileContent = async (content) => {
-  let isEmpty = false;
-  const defaultData = `
-  const component = () => {
-    return <></>;
-  };
-  
-  export default component;  
-  `;
-  fs.readFile("pages/api/GeneratedCodeComponent.js", "utf8", (_, data) => {
-    console.log("Equal? ", data.normalize() === defaultData.normalize());
-    if (data.normalize() === defaultData.normalize()) {
-      isEmpty = true;
+  fs.readFile("utils/GeneratedCodeComponent.js", "utf8", async (_, data) => {
+    // When Empty.
+    if (data.length) {
+      writeFileContent(content);
+    } else {
+      await writeFileContent("");
+      writeFileContent(content);
     }
   });
-
-  if (isEmpty) {
-    writeFileContent(content);
-  } else {
-    await writeFileContent(defaultData);
-    writeFileContent(content);
-  }
 };
 
 const writeFileContent = (content) => {
-  fs.writeFile("pages/api/GeneratedCodeComponent.js", content, (err) => {
+  fs.writeFile("utils/GeneratedCodeComponent.js", content, (err) => {
     if (err) {
       console.error("Error writing the file", err);
     } else {
